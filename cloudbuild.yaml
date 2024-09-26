@@ -1,3 +1,6 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
+  logsBucket: gs://playwright_logs
 steps:
   # Step 1: Clone the Git repository
   - name: 'gcr.io/cloud-builders/git'
