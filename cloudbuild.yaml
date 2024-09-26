@@ -1,4 +1,12 @@
 steps:
+  # Step 0: Create a directory and set permissions
+  - name: 'gcr.io/cloud-builders/bash'
+    args:
+      - '-c'
+      - |
+        mkdir -p /workspace/report && chmod 777 /workspace/report
+    id: 'Create Directory and Set Permissions'
+
   # Step 1: Clone the repository
   - name: 'gcr.io/cloud-builders/git'
     args: ['clone', 'https://github.com/pavigodj/playwright_gcloud.git', '/workspace/repo']
@@ -32,7 +40,7 @@ steps:
         mkdir -p /tmp/allure-report && \
         allure generate /workspace/allure-results -o /tmp/allure-report && \
         ls -al /tmp/allure-report && \
-        cp -rf /tmp/allure-report/* /workspace/allure-results/.
+        cp -rf /tmp/allure-report/* /workspace/report/.
     id: 'Generate Allure Report'
 
   # Step 5: Upload Allure Report to GCS
