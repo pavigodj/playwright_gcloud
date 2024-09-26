@@ -1,6 +1,6 @@
 options:
-  logging: CLOUD_LOGGING_ONLY
-  logsBucket: gs://playwright_logs
+  logging: CLOUD_LOGGING_ONLY  # Use CLOUD_LOGGING_ONLY to send logs to Cloud Logging
+  # logging: NONE  # Use NONE to disable logging completely
 steps:
   # Step 1: Clone the Git repository
   - name: 'gcr.io/cloud-builders/git'
