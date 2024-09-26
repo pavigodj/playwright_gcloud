@@ -5,7 +5,7 @@ steps:
     args:
       - '-c'
       - |
-        mkdir -p /workspace/report && chmod 666 /workspace/report
+        mkdir -p /workspace/report && chmod 777 /workspace/report
     id: 'Create Directory and Set Permissions'
 
   # Step 1: Clone the repository
@@ -32,16 +32,22 @@ steps:
         pytest --alluredir=/workspace/allure-results
     id: 'Run Tests with Allure'
 
+  # Debugging Step: List Directory Contents
+  - name: 'alpine'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - 'ls -la /workspace && ls -la /workspace/allure-report'
+    id: 'Debug Allure Results Directory'
+
   # Step 4: Generate Allure Report
   - name: 'frankescobar/allure-docker-service'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        mkdir -p /tmp/allure-report && \
-        allure generate /workspace/allure-results -o /tmp/allure-report && \
-        ls -al /tmp/allure-report && \
-        cp -rf /tmp/allure-report/* /workspace/report/.
+        chmod -R 777 /workspace/allure-results && \
+        allure generate /workspace/allure-results -o /workspace/allure-report
     id: 'Generate Allure Report'
 
   # Step 5: Upload Allure Report to GCS
