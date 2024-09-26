@@ -24,9 +24,9 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'run'
-      - '--rm -v ${WORKSPACE}:/workspace'
+      - '--rm '
       - 'gcr.io/$PROJECT_ID/playwright-image'
-      - 'pytest --alluredir=/workspace/reports'  # Add any additional pytest options here
+      - 'pytest --alluredir=allure-results'  # Add any additional pytest options here
 
 images:
   - 'gcr.io/$PROJECT_ID/playwright-image'
