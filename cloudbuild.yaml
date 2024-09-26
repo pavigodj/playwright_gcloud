@@ -5,7 +5,7 @@ steps:
     args:
       - '-c'
       - |
-        mkdir -p /workspace/report && chmod 777 /workspace/report
+        mkdir -p /workspace/report && chmod 666 /workspace/report
     id: 'Create Directory and Set Permissions'
 
   # Step 1: Clone the repository
