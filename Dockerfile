@@ -2,10 +2,7 @@
 FROM mcr.microsoft.com/playwright:v1.45.1-jammy
 
 # Set the working directory in the container
-WORKDIR /app
-
-# Copy the requirements.txt file from your local machine to the container
-COPY requirements.txt .
+WORKDIR /workspace/repo
 
 # Install Python and pip
 ENV DEBIAN_FRONTEND=noninteractive
@@ -19,5 +16,3 @@ RUN apt-get install -y --no-install-recommends python3-pip && \
     pip3 install --no-cache-dir -r requirements.txt && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Copy the testframework code
-COPY . .
