@@ -30,24 +30,16 @@ steps:
       - |
         mkdir -p /tmp/allure-report && \
         allure generate /workspace/allure-results -o /tmp/allure-report && \
-        ls -al /tmp/allure-report
+        ls -al /tmp/allure-report  && cp /tmp/allure-report/* /workspace/allure-results/.
     id: 'Generate Allure Report'
 
-  # Step 5: List the contents of the allure report directory
-  - name: 'frankescobar/allure-docker-service'  # Use the same Allure image
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - 'ls -al /tmp/allure-report'  # List the contents of the allure-report directory
-    id: 'List Allure Report Contents'
-
-  # Step 6: Upload Allure Report to GCS
+  # Step 5: Upload Allure Report to GCS
   - name: 'gcr.io/cloud-builders/gsutil'
     args:
       - '-m'
       - 'cp'
       - '-r'
-      - '/tmp/allure-report'
+      - '//workspace/allure-results'
       - 'gs://playwright_logs/allure-reports'
     id: 'Upload Allure Report to GCS'
 
