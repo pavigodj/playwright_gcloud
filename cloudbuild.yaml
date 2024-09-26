@@ -20,7 +20,8 @@ steps:
     args:
       - '-c'
       - |
-        pytest --alluredir=/workspace/allure-results
+        pytest --alluredir=/workspace/allure-results && \
+        mkdir -p /workspace/allure-report
     id: 'Run Tests with Allure'
 
   # Step 4: Generate Allure Report
@@ -29,9 +30,7 @@ steps:
     args:
       - '-c'
       - |
-        mkdir -p /tmp/allure-report && \
-        allure generate /workspace/allure-results -o /tmp/allure-report && \
-        ls -al /tmp/allure-report  && cp /tmp/allure-report/* /workspace/allure-results/.
+        allure generate /workspace/allure-results -o /workspace/allure-report
     id: 'Generate Allure Report'
 
   # Step 5: Upload Allure Report to GCS
@@ -40,7 +39,7 @@ steps:
       - '-m'
       - 'cp'
       - '-r'
-      - '//workspace/allure-results'
+      - '/workspace/allure-report'
       - 'gs://playwright_logs/allure-reports'
     id: 'Upload Allure Report to GCS'
 
