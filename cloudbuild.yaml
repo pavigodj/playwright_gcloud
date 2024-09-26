@@ -37,7 +37,7 @@ steps:
     entrypoint: 'sh'
     args:
       - '-c'
-      - 'ls -la /workspace && ls -la /workspace/allure-report'
+      - 'ls -la /workspace && ls -la /workspace/allure-report && chmod -R 777 /workspace/allure-results && chown -R root:root /workspace/allure-report'
     id: 'Debug Allure Results Directory'
 
   # Step 4: Generate Allure Report
@@ -46,7 +46,6 @@ steps:
     args:
       - '-c'
       - |
-        chmod -R 777 /workspace/allure-results && \
         allure generate /workspace/allure-results -o /workspace/allure-report
     id: 'Generate Allure Report'
 
