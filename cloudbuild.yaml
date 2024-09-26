@@ -29,7 +29,8 @@ steps:
       - '-c'
       - |
         mkdir -p /tmp/allure-report && \
-        allure generate /workspace/allure-results -o /tmp/allure-report
+        allure generate /workspace/allure-results -o /tmp/allure-report && \
+        ls -al /tmp/allure-report
     id: 'Generate Allure Report'
 
   # Step 5: List the contents of the allure report directory
