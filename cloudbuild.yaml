@@ -1,6 +1,7 @@
 steps:
   # Step 0: Create a directory and set permissions
-  - name: 'gcr.io/cloud-builders/bash'
+  - name: 'alpine'
+    entrypoint: 'sh'
     args:
       - '-c'
       - |
