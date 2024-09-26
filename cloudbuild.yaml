@@ -28,6 +28,7 @@ steps:
     args:
       - '-c'
       - |
+        mkdir -p /workspace/allure-report && \
         allure generate /workspace/allure-results -o /workspace/allure-report
     id: 'Generate Allure Report'
   
