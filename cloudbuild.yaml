@@ -55,7 +55,7 @@ steps:
       - '-m'
       - 'cp'
       - '-r'
-      - '/workspace/allure-results'
+      - '/workspace/allure-report'
       - 'gs://playwright_logs/allure-reports'
     id: 'Upload Allure Report to GCS'
 
