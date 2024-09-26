@@ -23,15 +23,14 @@ steps:
     id: 'Run Tests with Allure'
 
   # Step 4: Generate Allure Report
-  - name: 'frankescobar/allure-docker-service'  # Using Allure Docker service to generate report
-    args: [
-      'generate', 
-      '/workspace/allure-results',
-      '-o', 
-      '/workspace/allure-report'
-    ]
+  - name: 'frankescobar/allure-docker-service'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        allure generate /workspace/allure-results -o /workspace/allure-report
     id: 'Generate Allure Report'
-
+  
   # Step 5: Upload Allure Report to GCS
   - name: 'gcr.io/cloud-builders/gsutil'
     args: [
