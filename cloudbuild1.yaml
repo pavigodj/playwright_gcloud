@@ -13,16 +13,20 @@ steps:
     args: ['clone', 'https://github.com/pavigodj/playwright_gcloud.git', '/workspace/repo']
     id: 'Clone Repository'
 
-  # Debug Step: Verify repo structure
+  # Step 2: Debug: Verify cloned repository structure
   # This step will show the structure of the cloned repo to help with debugging.
   - name: 'alpine'
     entrypoint: 'sh'
     args:
       - '-c'
-      - 'ls -la /workspace/repo'
+      - |
+        echo "Listing contents of /workspace:"
+        ls -la /workspace
+        echo "Listing contents of /workspace/repo:"
+        ls -la /workspace/repo
     id: 'Verify Repo Structure'
 
-  # Step 2: Build Docker Image with necessary tools and libraries for Cucumber
+  # Step 3: Build Docker Image with necessary tools and libraries for Cucumber
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build',
@@ -32,13 +36,15 @@ steps:
     ]
     id: 'Build Docker Image'
 
-  # Step 3: Run Cucumber tests inside the Docker container
+  # Step 4: Run Cucumber tests inside the Docker container
   - name: 'gcr.io/$PROJECT_ID/playwright-cucumber'  # Use the image built in the previous step
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        cd /workspace/repo && ls -la  # List the contents of the repo to verify the structure
+        echo "Verifying contents of /workspace/repo inside Docker container:"
+        ls -la /workspace/repo
+        cd /workspace/repo
         if [ -f package.json ]; then
           echo "package.json found, proceeding with npm install"
           npm install
@@ -57,7 +63,7 @@ steps:
       - 'ls -la /workspace && ls -la /workspace/cucumber-report && chmod -R 777 /workspace/cucumber-report && chown -R root:root /workspace/cucumber-report'
     id: 'Debug Cucumber Report Directory'
 
-  # Step 4: Generate Cucumber HTML Report
+  # Step 5: Generate Cucumber HTML Report
   # Assuming you use a report generator like cucumber-html-reporter in your Docker container
   - name: 'gcr.io/$PROJECT_ID/playwright-cucumber'
     entrypoint: 'bash'
@@ -67,7 +73,7 @@ steps:
         npx cucumber-html-reporter --inputDir /workspace/repo/cucumber-json --output /workspace/cucumber-report  # Adjust command based on your setup
     id: 'Generate Cucumber Report'
 
-  # Step 5: Upload Cucumber Report to GCS
+  # Step 6: Upload Cucumber Report to GCS
   - name: 'gcr.io/cloud-builders/gsutil'
     args:
       - '-m'
