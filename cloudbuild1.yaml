@@ -13,6 +13,15 @@ steps:
     args: ['clone', 'https://github.com/pavigodj/playwright_gcloud.git', '/workspace/repo']
     id: 'Clone Repository'
 
+  # Debug Step: Verify repo structure
+  # This step will show the structure of the cloned repo to help with debugging.
+  - name: 'alpine'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - 'ls -la /workspace/repo'
+    id: 'Verify Repo Structure'
+
   # Step 2: Build Docker Image with necessary tools and libraries for Cucumber
   - name: 'gcr.io/cloud-builders/docker'
     args: [
@@ -29,7 +38,15 @@ steps:
     args:
       - '-c'
       - |
-        cd /workspace/repo && npm install && npm run test  # Replace 'npm run test' with your specific command to run Playwright with Cucumber
+        cd /workspace/repo && ls -la  # List the contents of the repo to verify the structure
+        if [ -f package.json ]; then
+          echo "package.json found, proceeding with npm install"
+          npm install
+          npm run test  # Replace 'npm run test' with your specific command to run Playwright with Cucumber
+        else
+          echo "package.json not found, exiting."
+          exit 1
+        fi
     id: 'Run Cucumber Tests'
 
   # Debugging Step: List Directory Contents
