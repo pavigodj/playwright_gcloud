@@ -1,36 +1,64 @@
 steps:
+  # Step 0: Create directories and set permissions
+  - name: 'alpine'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        mkdir -p /workspace/cucumber-report && chmod 777 /workspace/cucumber-report
+    id: 'Create Directory and Set Permissions'
+
   # Step 1: Clone the repository
   - name: 'gcr.io/cloud-builders/git'
     args: ['clone', 'https://github.com/pavigodj/playwright_gcloud.git', '/workspace/repo']
     id: 'Clone Repository'
 
-  # Step 2: Build Docker Image
+  # Step 2: Build Docker Image with necessary tools and libraries for Cucumber
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build',
-      '-t', 'gcr.io/$PROJECT_ID/playwright',
-      '/workspace/repo'
+      '-t', 'gcr.io/$PROJECT_ID/playwright-cucumber',
+      '-f', '/workspace/repo/Dockerfile',  # Specify the path to your Dockerfile
+      '/workspace/repo'  # Set the build context to the repo directory
     ]
     id: 'Build Docker Image'
 
-  # Step 3: Run pytest inside the Docker container
-  - name: 'gcr.io/$PROJECT_ID/playwright'  # Use the image built in the previous step
+  # Step 3: Run Cucumber tests inside the Docker container
+  - name: 'gcr.io/$PROJECT_ID/playwright-cucumber'  # Use the image built in the previous step
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        pytest --html=/workspace/test-reports/report.html
-    id: 'Run Tests with HTML Reporting'
+        npm run test  # Replace this with your specific command to run Playwright with Cucumber
+    id: 'Run Cucumber Tests'
 
-  # Step 4: Generate HTML Report to GCS
+  # Debugging Step: List Directory Contents
+  - name: 'alpine'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - 'ls -la /workspace && ls -la /workspace/cucumber-report && chmod -R 777 /workspace/cucumber-report && chown -R root:root /workspace/cucumber-report'
+    id: 'Debug Cucumber Report Directory'
+
+  # Step 4: Generate Cucumber HTML Report
+  # Assuming you use a report generator like cucumber-html-reporter in your Docker container
+  - name: 'gcr.io/$PROJECT_ID/playwright-cucumber'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        npx cucumber-html-reporter --inputDir /workspace/cucumber-json --output /workspace/cucumber-report  # Adjust command based on your setup
+    id: 'Generate Cucumber Report'
+
+  # Step 5: Upload Cucumber Report to GCS
   - name: 'gcr.io/cloud-builders/gsutil'
     args:
       - '-m'
       - 'cp'
       - '-r'
-      - '/workspace/test-reports'
-      - 'gs://playwright_logs/test-reports'
-    id: 'Upload HTML Report to GCS'
+      - '/workspace/cucumber-report'
+      - 'gs://playwright_logs/cucumber-reports'
+    id: 'Upload Cucumber Report to GCS'
 
 options:
   logging: CLOUD_LOGGING_ONLY
@@ -40,4 +68,3 @@ substitutions:
   _BUCKET_NAME: 'playwright_logs'  # Replace with your GCS bucket name
 
 timeout: '900s'
-
