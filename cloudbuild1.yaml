@@ -29,7 +29,7 @@ steps:
     args:
       - '-c'
       - |
-        npm run test  # Replace this with your specific command to run Playwright with Cucumber
+        cd /workspace/repo && npm install && npm run test  # Replace 'npm run test' with your specific command to run Playwright with Cucumber
     id: 'Run Cucumber Tests'
 
   # Debugging Step: List Directory Contents
@@ -47,7 +47,7 @@ steps:
     args:
       - '-c'
       - |
-        npx cucumber-html-reporter --inputDir /workspace/cucumber-json --output /workspace/cucumber-report  # Adjust command based on your setup
+        npx cucumber-html-reporter --inputDir /workspace/repo/cucumber-json --output /workspace/cucumber-report  # Adjust command based on your setup
     id: 'Generate Cucumber Report'
 
   # Step 5: Upload Cucumber Report to GCS
